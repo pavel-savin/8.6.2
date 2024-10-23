@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+<h1>{{ Post.article_title_news|filter_words }}</h1>
+<h2>{{ Post.automatic_data_time|date:'d M Y' }}</h2>
+<h5>{{ Post.text_title_news|filter_words }}</h5>
+{% endblock content %}

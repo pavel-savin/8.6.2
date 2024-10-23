@@ -1,0 +1,23 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Все статьи
+{% endblock title %}
+
+{% block content %}
+<h1>Все статьи</h1>
+<hr size="20">
+{% if Posts %}
+    {% for Post in Posts %}
+        <hr size="20">
+        <h2>{{ Post.article_title_news|filter_words }}</h2>  {# Заголовок статьи #}
+        <h3>{{ Post.automatic_data_time|date:'d M Y' }}</h3>  {# Дата публикации #}
+        <p>{{ Post.text_title_news|slice:":20"|filter_words }}...</p>  {# Первые 20 символов текста #}
+        <hr size="20">
+    {% endfor %}
+{% else %}
+    <h2>Статей нет!</h2>
+{% endif %}
+{% endblock content %}
