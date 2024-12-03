@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Bare - Start Bootstrap Template</title>
+        <title>Увлекательные новости:</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Core theme CSS (includes Bootstrap)-->
@@ -16,7 +16,7 @@
         <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
    <div class="container">
-       <a class="navbar-brand" href="#">Django News Project</a>
+       <a class="navbar-brand" href="/news/">Новости</a>
        <button class="navbar-toggler" type="button" data-toggle="collapse"
                data-target="#navbarResponsive"
                aria-controls="navbarResponsive" aria-expanded="false"
@@ -26,9 +26,24 @@
        <div class="collapse navbar-collapse" id="navbarResponsive">
            <ul class="navbar-nav ml-auto">
                <li class="nav-item active">
-                   <a class="nav-link" href="#">Home
+                    <a class="nav-link" href="/news/search">
+                    <i class="fas fa-search"></i> Поиск
                    </a>
+                </li>
            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/sign/login/">Вход</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sign/signup/">Регистрация</a>
+                </li>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'confirm_logout' %}">Выход</a>
+                    </li>
+                </ul>
+            </ul>
        </div>
    </div>
 </nav>

@@ -3,10 +3,13 @@
 {% block content %}
 <h1>Создание или редактирование записи</h1>
 <hr>
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Сохранить" />
-</form>
+{% if request.user.groups.filter(name='authors').exists %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить" />
+    </form>
+{% else %}
+    <p>У вас нет прав на создание или редактирование записей.</p>
+{% endif %}
 {% endblock content %}
-

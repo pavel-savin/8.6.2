@@ -7,6 +7,10 @@ from django.views.generic import (
 from .models import Post
 from .filter_search import PostFilter
 from .forms import PostForm
+from django.http import HttpResponseForbidden
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
 
 # Список постов
 class PostsList(ListView):
@@ -50,12 +54,19 @@ class BasePostView:
     def get_success_url(self):
         return self.success_url
 
+
 # Универсальный класс для создания, обновления и удаления постов
-class PostCreateView(BasePostView, CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'flatpages/post_edit.html'
     
+    # Проверка на группу 'authors'
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='authors').exists():
+            return HttpResponseForbidden("У вас нет прав на создание постов.")
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         post = form.save(commit=False)
         # Устанавливаем тип в зависимости от URL
@@ -65,11 +76,48 @@ class PostCreateView(BasePostView, CreateView):
             post.article_or_news = 1  # статья
         return super().form_valid(form)
 
-class PostUpdateView(BasePostView, UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'flatpages/post_edit.html'
 
-class PostDeleteView(BasePostView, DeleteView):
+    # Проверка на группу 'authors'
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='authors').exists():
+            return HttpResponseForbidden("У вас нет прав на редактирование постов.")
+        return super().dispatch(request, *args, **kwargs)
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'flatpages/post_delete.html'
+
+    # Проверка на группу 'authors'
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name='authors').exists():
+            return HttpResponseForbidden("У вас нет прав на удаление постов.")
+        return super().dispatch(request, *args, **kwargs)
+    
+    
+# # Универсальный класс для создания, обновления и удаления постов
+# class PostCreateView(BasePostView, CreateView):
+#     form_class = PostForm
+#     model = Post
+#     template_name = 'flatpages/post_edit.html'
+    
+#     def form_valid(self, form):
+#         post = form.save(commit=False)
+#         # Устанавливаем тип в зависимости от URL
+#         if 'news' in self.request.path:
+#             post.article_or_news = 0  # новость
+#         elif 'articles' in self.request.path:
+#             post.article_or_news = 1  # статья
+#         return super().form_valid(form)
+
+# class PostUpdateView(BasePostView, UpdateView):
+#     form_class = PostForm
+#     model = Post
+#     template_name = 'flatpages/post_edit.html'
+
+# class PostDeleteView(BasePostView, DeleteView):
+#     model = Post
+#     template_name = 'flatpages/post_delete.html'

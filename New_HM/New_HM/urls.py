@@ -17,10 +17,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('news/', include('my_HM.urls')),
-    path('articles/', include('my_HM.urls'))
+    path('articles/', include('my_HM.urls')),
+    path('sign/', include('sign.urls')),
+    path('', lambda request: redirect('/news/')),  # редирект главной страницы на /news/
+    path('accounts/', include('allauth.urls')),
 ]
