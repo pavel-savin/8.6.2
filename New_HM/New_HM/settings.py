@@ -124,13 +124,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ru"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
+
+USE_L10N = True
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -149,15 +152,16 @@ STATICFILES_DIRS = [
 
 
 ACCOUNT_FORMS = {
-    'signup': 'sign.forms.CustomSignupForm',  # Указываем путь к кастомной форме
+    'signup': 'sign.CustomSignupForm',  # Замени your_app на имя приложения
 }
+
 
 
 
 
 LOGIN_URL = '/sign/login/'
 LOGIN_REDIRECT_URL = '/news/'
-LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'  # Или другой путь, куда хотите перенаправить пользователя
 
 
 
@@ -168,9 +172,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+
+
+

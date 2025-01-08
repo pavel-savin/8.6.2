@@ -14,39 +14,62 @@
     </head>
     <body>
         <!-- Responsive navbar-->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-   <div class="container">
-       <a class="navbar-brand" href="/news/">Новости</a>
-       <button class="navbar-toggler" type="button" data-toggle="collapse"
-               data-target="#navbarResponsive"
-               aria-controls="navbarResponsive" aria-expanded="false"
-               aria-label="Toggle navigation">
-           <span class="navbar-toggler-icon"></span>
-       </button>
-       <div class="collapse navbar-collapse" id="navbarResponsive">
-           <ul class="navbar-nav ml-auto">
-               <li class="nav-item active">
-                    <a class="nav-link" href="/news/search">
-                    <i class="fas fa-search"></i> Поиск
-                   </a>
-                </li>
-           </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/sign/login/">Вход</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sign/signup/">Регистрация</a>
-                </li>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'confirm_logout' %}">Выход</a>
-                    </li>
-                </ul>
-            </ul>
-       </div>
-   </div>
-</nav>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+            <div class="container">
+                <a class="navbar-brand" href="/news/">Новости</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarResponsive"
+                        aria-controls="navbarResponsive" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                             <a class="nav-link" href="/news/search">
+                             <i class="fas fa-search"></i> Поиск
+                            </a>
+                         </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <!-- Ссылка на выход только для авторизованных пользователей -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'confirm_logout' %}">Выход</a>
+                            </li>
+                        {% else %}
+                            <!-- Ссылки на вход и регистрацию для неавторизованных пользователей -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'signup' %}">Регистрация</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!-- Размещаем приветствие в правом верхнем углу -->
+                <!-- Приветствие и действия пользователя -->
+<div class="ml-auto">
+    {% if user.is_authenticated %}
+        <span class="navbar-text text-white">Привет, {{ user.username }}!</span>
+        <div class="mt-2">
+            {% if not user.groups.filter(name='authors').exists %}
+                <a href="{% url 'upgrade_to_author' %}" class="btn btn-primary btn-sm">Стать автором</a>
+            {% else %}
+                <span class="text-success">Вы автор</span>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+            </div>
+         </nav>
+         
+         
+         
+         
+
         <!-- Page content-->
 <div class="container">
    <div class="row">

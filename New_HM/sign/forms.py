@@ -1,13 +1,12 @@
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
 
-class CustomSignupForm(SignupForm):
-
+class BasicSignupForm(SignupForm):
     def save(self, request):
-        # Сначала вызываем родительский метод, чтобы сохранить пользователя
-        user = super().save(request)
-        # Получаем группу 'common'
-        common_group = Group.objects.get(name='common')
+        # Сохраняем пользователя с помощью родительского метода
+        user = super(BasicSignupForm, self).save(request)
+        # Получаем группу 'basic'
+        basic_group = Group.objects.get(name='common')
         # Добавляем пользователя в группу
-        common_group.user_set.add(user)
+        basic_group.user_set.add(user)
         return user

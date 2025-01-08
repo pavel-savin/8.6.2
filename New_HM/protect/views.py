@@ -10,9 +10,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_not_au'] = not self.request.user.groups.filter(name = 'premium').exists()
+        context['is_not_author'] = not self.request.user.groups.filter(name = 'authors').exists()
         return context
-# Create your views here.
 
 class MyView(PermissionRequiredMixin, View):
     permission_required = ('<app>.<action>_<model>',

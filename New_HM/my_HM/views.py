@@ -18,7 +18,7 @@ class PostsList(ListView):
     ordering = '-automatic_data_time'  # Изменено на обратный порядок
     template_name = 'flatpages/news_feed.html'
     context_object_name = 'Posts'
-    paginate_by = 10  # Пагинация
+    paginate_by = 5  # Пагинация
 
 
 
