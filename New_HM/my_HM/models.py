@@ -6,8 +6,7 @@ from django.db.models import Sum
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete= models.CASCADE)
     rating = models.IntegerField(default=0)
-    posts = models.Manager
-    
+   
     def update_rating(self):
         # Cуммарный рейтинг каждой статьи автора * 3
         post_rating = Post.objects.filter(author=self).aggregate(Sum('rating'))['rating__sum'] or 0

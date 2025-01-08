@@ -9,6 +9,7 @@ from .filter_search import PostFilter
 from .forms import PostForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Author
 
 
 
@@ -60,32 +61,67 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'flatpages/post_edit.html'
-    
+
     # Проверка на группу 'authors'
     def dispatch(self, request, *args, **kwargs):
         if not request.user.groups.filter(name='authors').exists():
             return HttpResponseForbidden("У вас нет прав на создание постов.")
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('posts_list')  # Это перенаправит на список постов после успешного создания
+
     def form_valid(self, form):
         post = form.save(commit=False)
-        # Устанавливаем тип в зависимости от URL
-        if 'news' in self.request.path:
+    
+        # Получаем или создаем объект Author для текущего пользователя
+        author, created = Author.objects.get_or_create(user=self.request.user)
+    
+        # Устанавливаем автора для поста
+        post.author = author
+    
+        # Если путь начинается с /news/, то это новость, иначе статья
+        if self.request.path.startswith('/news/'):
             post.article_or_news = 0  # новость
-        elif 'articles' in self.request.path:
+        elif self.request.path.startswith('/articles/'):
             post.article_or_news = 1  # статья
+
+        # Сохраняем пост
+        post.save()
+    
         return super().form_valid(form)
+
+
+
+
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'flatpages/post_edit.html'
 
-    # Проверка на группу 'authors'
+    # Проверка на группу 'authors' и права на редактирование поста
     def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
         if not request.user.groups.filter(name='authors').exists():
             return HttpResponseForbidden("У вас нет прав на редактирование постов.")
+        if post.author.user != request.user:
+            return HttpResponseForbidden("Вы не можете редактировать чужие посты.")
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('posts_list')  # Перенаправляем на список постов после успешного редактирования
+
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post

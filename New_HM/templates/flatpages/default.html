@@ -49,20 +49,18 @@
                     </ul>
                 </div>
                 <!-- Размещаем приветствие в правом верхнем углу -->
-                <!-- Приветствие и действия пользователя -->
-<div class="ml-auto">
-    {% if user.is_authenticated %}
-        <span class="navbar-text text-white">Привет, {{ user.username }}!</span>
-        <div class="mt-2">
-            {% if not user.groups.filter(name='authors').exists %}
-                <a href="{% url 'upgrade_to_author' %}" class="btn btn-primary btn-sm">Стать автором</a>
-            {% else %}
-                <span class="text-success">Вы автор</span>
-            {% endif %}
-        </div>
-    {% endif %}
-</div>
-
+                <div class="ml-auto">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-text text-white">Привет, {{ user.username }}!</span>
+                        <div class="mt-2">
+                            {% if not is_author %}
+                                <a href="{% url 'upgrade_to_author' %}" class="btn btn-primary btn-sm">Стать автором</a>
+                            {% else %}
+                                <span class="text-success">Вы автор</span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>               
             </div>
          </nav>
          
