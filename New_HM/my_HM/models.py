@@ -7,6 +7,9 @@ class Author(models.Model):
     user = models.OneToOneField(User, on_delete= models.CASCADE)
     rating = models.IntegerField(default=0)
    
+    def __str__(self):
+        return self.user.username
+    
     def update_rating(self):
         # Cуммарный рейтинг каждой статьи автора * 3
         post_rating = Post.objects.filter(author=self).aggregate(Sum('rating'))['rating__sum'] or 0
@@ -22,6 +25,8 @@ class Author(models.Model):
 class Category(models.Model):
     categories = models.CharField(max_length=100, unique=True)
     
+    def __str__(self):
+        return self.categories
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='post')
     article_or_news = models.IntegerField(default= 0)
