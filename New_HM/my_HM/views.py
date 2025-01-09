@@ -11,6 +11,10 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Author
 
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Category, Subscription
+
 
 
 # Список постов
@@ -134,6 +138,18 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
     
     
+@login_required
+def subscribe_to_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    Subscription.objects.get_or_create(user=request.user, category=category)
+    return redirect('category_detail', category_id=category.id)
+
+@login_required
+def unsubscribe_from_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    Subscription.objects.filter(user=request.user, category=category).delete()
+    return redirect('category_detail', category_id=category.id)
+
 # # Универсальный класс для создания, обновления и удаления постов
 # class PostCreateView(BasePostView, CreateView):
 #     form_class = PostForm

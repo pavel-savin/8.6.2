@@ -61,3 +61,9 @@ class Comment(models.Model):
         self.rating -=1
         self.save()
         
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'category')

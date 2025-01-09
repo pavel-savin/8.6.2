@@ -181,5 +181,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'BangBong097'
+EMAIL_HOST_PASSWORD = 'gvmulfdraeuqbzle'
+EMAIL_USE_SSL = True
+
+
 
 
