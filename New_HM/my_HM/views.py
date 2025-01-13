@@ -20,10 +20,22 @@ from .models import Category, Subscription
 # Список постов
 class PostsList(ListView):
     model = Post
-    ordering = '-automatic_data_time'  # Изменено на обратный порядок
+    ordering = '-automatic_data_time'
     template_name = 'flatpages/news_feed.html'
     context_object_name = 'Posts'
-    paginate_by = 5  # Пагинация
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user.is_authenticated:
+            # Получение категорий, на которые подписан пользователь
+            subscribed_categories = Subscription.objects.filter(user=user).values_list('category_id', flat=True)
+            context['subscribed_categories'] = subscribed_categories
+        else:
+            context['subscribed_categories'] = []
+        return context
+
 
 
 
@@ -142,13 +154,19 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 def subscribe_to_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     Subscription.objects.get_or_create(user=request.user, category=category)
-    return redirect('category_detail', category_id=category.id)
+
+    # Получение URL для возврата
+    next_url = request.GET.get('next', 'posts_list')
+    return redirect(next_url)
 
 @login_required
 def unsubscribe_from_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     Subscription.objects.filter(user=request.user, category=category).delete()
-    return redirect('category_detail', category_id=category.id)
+
+    # Получение URL для возврата
+    next_url = request.GET.get('next', 'posts_list')
+    return redirect(next_url)
 
 # # Универсальный класс для создания, обновления и удаления постов
 # class PostCreateView(BasePostView, CreateView):

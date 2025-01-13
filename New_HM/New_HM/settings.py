@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    # Переодические задачи
+    'django_apscheduler',
 ]
 
 SITE_ID = 1
@@ -184,9 +186,18 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 
-EMAIL_HOST_PASSWORD = 
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_SSL = True
+
+
+# 'django_apscheduler'
+# Формат даты, которую будет воспринимать наш задачник  
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+ 
+# Время выполнения задачи
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
 
 
 

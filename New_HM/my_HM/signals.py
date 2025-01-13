@@ -1,13 +1,13 @@
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import Post
 
-@receiver(post_save, sender=Post)
-def notify_subscribers(sender, instance, created, **kwargs):
-    if created:  # Проверка на создание новой статьи
+@receiver(m2m_changed, sender=Post.post_category.through)
+def notify_subscribers(sender, instance, action, **kwargs):
+    if action == 'post_add':  # Проверка на создание новой статьи
         from .models import Subscription
         # Перебираем все категории, к которым относится статья
         for category in instance.post_category.all():
@@ -17,9 +17,9 @@ def notify_subscribers(sender, instance, created, **kwargs):
             
             # Отправляем уведомление на email
             send_mail(
-                subject=f'Новая статья в категории {category.name}',
+                subject=f'Новая статья в категории {category.categories}',
                 message=f'Статья: {instance.article_title_news}\n\nСсылка: http://127.0.0.1:8000/news/{instance.id}',
-                from_email='BangBong097@yandex.ru',  # Укажите свой email
+                from_email='BangBong097@yandex.ru',  # Свой email
                 recipient_list=emails,
             )
 

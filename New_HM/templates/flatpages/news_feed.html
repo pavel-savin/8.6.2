@@ -1,28 +1,48 @@
 {% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 
-{% block title %} Все статьи {% endblock title %}
+{% block title %}Все статьи{% endblock title %}
 
 {% block content %}
-<h1>Все статьи</h1>
-<hr size="20">
+<div class="container">
+    <h1 class="my-4 text-center">Все статьи</h1>
+    <hr class="mb-4">
 
-<!-- Пагинация сверху страницы -->
-{% include 'flatpages/pagination.html' %}
-
-{% if Posts %}
-    {% for Post in Posts %}
-        <hr size="20">
-        <h2>{{ Post.article_title_news|filter_words }}</h2>
-        <h3>{{ Post.automatic_data_time|date:'d M Y' }}</h3>
-        <p>{{ Post.text_title_news|slice:":20"|filter_words }}...</p>
-        <hr size="20">
-    {% endfor %}
-
-    <!-- Пагинация внизу страницы -->
+    <!-- Пагинация сверху страницы -->
     {% include 'flatpages/pagination.html' %}
-{% else %}
-    <h2>Статей нет!</h2>
-{% endif %}
-{% endblock content %}
 
+    {% if Posts %}
+        {% for Post in Posts %}
+            <div class="post mb-5">
+                <hr class="mb-4">
+                <h2 class="post-title">{{ Post.article_title_news|filter_words }}</h2>
+                <h3 class="post-date text-muted">{{ Post.automatic_data_time|date:'d M Y' }}</h3>
+                <p class="post-preview">
+                    {{ Post.text_title_news|slice:":20"|filter_words }}...
+                </p>
+
+                <!-- Отображение категорий -->
+                <p>Категории: 
+                    {% for category in Post.post_category.all %}
+                        <span id="category-{{ category.id }}" class="badge bg-info text-dark">{{ category.categories }}</span>
+                        {% if category.id in subscribed_categories %}
+                            <a href="{% url 'unsubscribe_from_category' category.id %}?next={{ request.path }}#category-{{ category.id }}" 
+                               class="btn btn-danger btn-sm">Отписаться</a>
+                        {% else %}
+                            <a href="{% url 'subscribe_to_category' category.id %}?next={{ request.path }}#category-{{ category.id }}" 
+                               class="btn btn-success btn-sm">Подписаться</a>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                <a href="{% url 'post_detail' pk=Post.pk %}" class="btn btn-primary">Читать далее</a>
+                <hr class="mt-4">                
+            </div>
+        {% endfor %}
+
+        <!-- Пагинация внизу страницы -->
+        {% include 'flatpages/pagination.html' %}
+    {% else %}
+        <h2 class="text-center my-5">Статей нет!</h2>
+    {% endif %}
+</div>
+{% endblock content %}
