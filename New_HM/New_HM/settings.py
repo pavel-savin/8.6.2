@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from celery.schedules import crontab
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -192,11 +194,29 @@ EMAIL_USE_SSL = True
 
 
 # 'django_apscheduler'
-# Формат даты, которую будет воспринимать наш задачник  
+# Формат даты 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
  
 # Время выполнения задачи
 APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+
+# Celery settings
+CELERY_BROKER_URL = ''  # URL Redis сервера
+CELERY_RESULT_BACKEND = ''  # Где будут храниться результаты
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Moscow' 
+CELERY_BEAT_SCHEDULE = {
+    'send_weekly_newsletter': {
+        'task': 'my_HM.tasks.send_weekly_newsletter',  # Задача для рассылки новостей
+        'schedule': crontab(hour=8, minute=0, day_of_week=1),  # Каждое понедельник в 8:00
+    },
+}
+
+
+
+
 
 
 

@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .models import Post
+from .tasks import send_post_notification
 
 @receiver(m2m_changed, sender=Post.post_category.through)
 def notify_subscribers(sender, instance, action, **kwargs):
@@ -32,3 +33,10 @@ def send_welcome_email(sender, instance, created, **kwargs):
             from_email='BangBong097@yandex.ru',
             recipient_list=[instance.email],
         )
+        
+        
+# Celery
+@receiver(post_save, sender=Post)
+def notify_subscribers(sender, instance, created, **kwargs):
+    if created:
+        send_post_notification.apply_async(args=[instance.id])
